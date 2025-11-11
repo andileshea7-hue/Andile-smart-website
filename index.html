@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Andile's Very Smart Website</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      font-family: 'Segoe UI', sans-serif;
+      background: #0b1f3a;
+      color: #ecf0f1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .fade {
+      animation: fadeIn 2s;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    .container {
+      width: 100%;
+      max-width: 1000px;
+      height: 95vh;
+      padding: 45px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      background: rgba(255,255,255,0.05);
+      backdrop-filter: blur(10px);
+      border-radius: 15px;
+    }
+    h1, h2 {
+      margin: 10px 0;
+      color: #ffffff;
+    }
+    .topic-row {
+      display: flex;
+      justify-content: center;
+      gap: 25px;
+      margin-top: 20px;
+      flex-wrap: wrap;
+    }
+    .topic-row button {
+      padding: 14px 28px;
+      font-size: 20px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      background: #3498db;
+      color: white;
+      transition: background 0.3s;
+      min-width: 150px;
+    }
+    .topic-row button:hover {
+      background: #2980b9;
+    }
+    .option {
+      display: block;
+      margin: 10px 0;
+      padding: 12px;
+      border-radius: 8px;
+      background: #1c3d6b;
+      color: white;
+      cursor: pointer;
+      transition: background 0.3s;
+      width: 100%;
+    }
+    .option:hover {
+      background: #2c5aa0;
+    }
+    .correct { background: #2ecc71 !important; }
+    .wrong { background: #e74c3c !important; }
+    footer {
+      margin-top: 20px;
+      font-size: 12px;
+      color: #bdc3c7;
+    }
+  </style>
+</head>
+<body>
+  <div class="container fade" id="main">
+    <h1>Welcome to Andile's Very Smart Website</h1>
+    <h2>Select a Topic</h2>
+    <div class="topic-row">
+      <button onclick="startQuiz('religion')">Religion</button>
+      <button onclick="startQuiz('math')">Maths</button>
+      <button onclick="startQuiz('science')">Science</button>
+    </div>
+  </div>
+
+  <footer>© 2025 Andile. All rights reserved.</footer>
+
+  <script>
+    const quizzes = {
+      math: [
+        { q: "2 + 2 = ?", a: "4", options: ["3", "4", "5", "6"] },
+        { q: "5 × 3 = ?", a: "15", options: ["8", "15", "10", "20"] },
+        { q: "Square root of 9?", a: "3", options: ["2", "3", "4", "5"] },
+        { q: "10 ÷ 2 = ?", a: "5", options: ["2", "4", "5", "10"] },
+        { q: "7 - 4 = ?", a: "3", options: ["1", "2", "3", "4"] },
+        { q: "6 + 1 = ?", a: "7", options: ["6", "7", "8", "9"] },
+      ],
+      science: [
+        { q: "Water freezes at?", a: "0°C", options: ["0°C", "100°C", "50°C", "10°C"] },
+        { q: "Sun is a?", a: "Star", options: ["Planet", "Star", "Comet", "Moon"] },
+        { q: "H2O is?", a: "Water", options: ["Oxygen", "Hydrogen", "Water", "Salt"] },
+        { q: "Earth orbits?", a: "Sun", options: ["Moon", "Sun", "Mars", "Venus"] },
+        { q: "Human body has ___ bones?", a: "206", options: ["200", "206", "210", "180"] },
+        { q: "Boiling point of water?", a: "100°C", options: ["90°C", "100°C", "110°C", "80°C"] },
+      ],
+      religion: [
+        { q: "Bible has how many testaments?", a: "2", options: ["1", "2", "3", "4"] },
+        { q: "Muslims pray ___ times a day?", a: "5", options: ["3", "4", "5", "6"] },
+        { q: "Jesus was born in?", a: "Bethlehem", options: ["Nazareth", "Jerusalem", "Bethlehem", "Rome"] },
+        { q: "Holi is celebrated by?", a: "Hindus", options: ["Muslims", "Christians", "Hindus", "Jews"] },
+        { q: "Quran is holy book of?", a: "Islam", options: ["Christianity", "Islam", "Judaism", "Hinduism"] },
+        { q: "Sabbath is observed on?", a: "Saturday", options: ["Friday", "Saturday", "Sunday", "Monday"] },
+      ]
+    };
+
+    let currentQuiz = [];
+    let currentIndex = 0;
+    let missed = [];
+
+    function startQuiz(topic) {
+      currentQuiz = quizzes[topic];
+      currentIndex = 0;
+      missed = [];
+      showQuestion();
+    }
+
+    function showQuestion() {
+      const q = currentQuiz[currentIndex];
+      const container = document.getElementById("main");
+      container.className = "container fade";
+      container.innerHTML = `<h2>Question ${currentIndex + 1} of ${currentQuiz.length}</h2><p>${q.q}</p>`;
+      q.options.forEach(opt => {
+        const btn = document.createElement("div");
+        btn.className = "option";
+        btn.textContent = opt;
+        btn.onclick = () => checkAnswer(opt, q.a);
+        container.appendChild(btn);
+      });
+    }
+
+    function checkAnswer(selected, correct) {
+      const options = document.querySelectorAll(".option");
+      options.forEach(opt => {
+        opt.onclick = null;
+        if (opt.textContent === correct) opt.classList.add("correct");
+        else if (opt.textContent === selected) opt.classList.add("wrong");
+      });
+      if (selected !== correct) missed.push({ question: currentQuiz[currentIndex].q, correct });
+      setTimeout(() => {
+        currentIndex++;
+        if (currentIndex < currentQuiz.length) showQuestion();
+        else showResults();
+      }, 2000);
+    }
+
+    function showResults() {
+      const container = document.getElementById("main");
+      container.className = "container fade";
+      container.innerHTML = `<h2>Quiz Complete!</h2><p>You missed ${missed.length} question(s).</p>`;
+      if (missed.length > 0) {
+        missed.forEach(m => {
+          const div = document.createElement("div");
+          div.innerHTML = `<strong>Q:</strong> ${m.question}<br/><strong>Answer:</strong> ${m.correct}<br/><br/>`;
+          container.appendChild(div);
+        });
+      }
+      container.innerHTML += `<button onclick="location.reload()">Back to Topics</button>`;
+    }
+  </script>
+</body>
+</html>
